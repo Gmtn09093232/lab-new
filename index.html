@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Material Testing Laboratory — Report & Analysis System</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/>
+          </svg>
+          <span>MTL Lab</span>
+        </div>
+        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="#" class="nav-item active" data-page="dashboard">
+          <span class="nav-icon">📊</span> Dashboard
+        </a>
+        <a href="#" class="nav-item" data-page="samples">
+          <span class="nav-icon">🧪</span> Samples
+        </a>
+        <a href="#" class="nav-item" data-page="utm">
+          <span class="nav-icon">⚙️</span> UTM Testing
+        </a>
+        <a href="#" class="nav-item" data-page="composition">
+          <span class="nav-icon">🧬</span> Composition
+        </a>
+        <a href="#" class="nav-item" data-page="hardness">
+          <span class="nav-icon">💎</span> Hardness
+        </a>
+        <a href="#" class="nav-item" data-page="microstructure">
+          <span class="nav-icon">🔬</span> Microstructure
+        </a>
+        <a href="#" class="nav-item" data-page="impact">
+          <span class="nav-icon">💥</span> Impact Test
+        </a>
+        <a href="#" class="nav-item" data-page="roughness">
+          <span class="nav-icon">📏</span> Surface Roughness
+        </a>
+        <a href="#" class="nav-item" data-page="reports">
+          <span class="nav-icon">📄</span> Reports
+        </a>
+        <a href="#" class="nav-item" data-page="history">
+          <span class="nav-icon">📁</span> History
+        </a>
+        <a href="#" class="nav-item" data-page="settings">
+          <span class="nav-icon">⚙️</span> Settings
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <small>Material Testing Laboratory<br>v1.0.0</small>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="top-header">
+        <div class="header-left">
+          <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+          <h1 id="pageTitle">Dashboard</h1>
+        </div>
+        <div class="header-right">
+          <span class="lab-name" id="labNameDisplay">Material Testing Laboratory</span>
+          <span class="current-date" id="currentDate"></span>
+        </div>
+      </header>
+
+      <!-- Dashboard Page -->
+      <section class="page active" id="page-dashboard">
+        <div class="stats-grid" id="statsGrid">
+          <div class="stat-card">
+            <div class="stat-icon blue">🧪</div>
+            <div class="stat-info">
+              <span class="stat-value" id="statTotalSamples">0</span>
+              <span class="stat-label">Total Samples</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon teal">🔬</div>
+            <div class="stat-info">
+              <span class="stat-value" id="statTotalTests">0</span>
+              <span class="stat-label">Total Tests</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon green">✅</div>
+            <div class="stat-info">
+              <span class="stat-value" id="statCompleted">0</span>
+              <span class="stat-label">Completed</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon orange">⏳</div>
+            <div class="stat-info">
+              <span class="stat-value" id="statPending">0</span>
+              <span class="stat-label">Pending</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon green">✓</div>
+            <div class="stat-info">
+              <span class="stat-value" id="statPassed">0</span>
+              <span class="stat-label">Passed</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon red">✗</div>
+            <div class="stat-info">
+              <span class="stat-value" id="statFailed">0</span>
+              <span class="stat-label">Failed</span>
+            </div>
+          </div>
+        </div>
+        <div class="dashboard-row">
+          <div class="card">
+            <div class="card-header">
+              <h3>Test Type Statistics</h3>
+            </div>
+            <div class="card-body">
+              <canvas id="dashboardChart" height="220"></canvas>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <h3>Recent Reports</h3>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="data-table" id="recentReportsTable">
+                  <thead>
+                    <tr>
+                      <th>Report No.</th>
+                      <th>Sample ID</th>
+                      <th>Customer</th>
+                      <th>Status</th>
+                      <th>Date</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Samples Page -->
+      <section class="page" id="page-samples">
+        <div class="page-actions">
+          <button class="btn btn-primary" id="btnNewSample">+ New Sample</button>
+        </div>
+        <div class="card" id="sampleFormCard" style="display:none;">
+          <div class="card-header">
+            <h3 id="sampleFormTitle">Register Sample</h3>
+            <button class="btn-icon" id="btnCloseSampleForm">✕</button>
+          </div>
+          <div class="card-body">
+            <form id="sampleForm" class="form-grid">
+              <input type="hidden" id="sampleEditId">
+              <div class="form-group">
+                <label for="reportNumber">Report Number *</label>
+                <input type="text" id="reportNumber" readonly>
+              </div>
+              <div class="form-group">
+                <label for="sampleId">Sample ID *</label>
+                <input type="text" id="sampleId" required>
+              </div>
+              <div class="form-group">
+                <label for="customerName">Customer Name *</label>
+                <input type="text" id="customerName" required>
+              </div>
+              <div class="form-group">
+                <label for="company">Company / Organization</label>
+                <input type="text" id="company">
+              </div>
+              <div class="form-group">
+                <label for="projectName">Project Name</label>
+                <input type="text" id="projectName">
+              </div>
+              <div class="form-group">
+                <label for="sampleDescription">Sample Description</label>
+                <textarea id="sampleDescription" rows="2"></textarea>
+              </div>
+              <div class="form-group">
+                <label for="materialType">Material Type *</label>
+                <select id="materialType" required>
+                  <option value="">— Select —</option>
+                  <option value="Carbon Steel">Carbon Steel</option>
+                  <option value="Alloy Steel">Alloy Steel</option>
+                  <option value="Stainless Steel">Stainless Steel</option>
+                  <option value="Aluminum Alloy">Aluminum Alloy</option>
+                  <option value="Copper Alloy">Copper Alloy</option>
+                  <option value="Cast Iron">Cast Iron</option>
+                  <option value="Titanium Alloy">Titanium Alloy</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="materialGrade">Material Grade</label>
+                <input type="text" id="materialGrade">
+              </div>
+              <div class="form-group">
+                <label for="heatNumber">Heat Number</label>
+                <input type="text" id="heatNumber">
+              </div>
+              <div class="form-group">
+                <label for="batchNumber">Batch Number</label>
+                <input type="text" id="batchNumber">
+              </div>
+              <div class="form-group">
+                <label for="manufacturer">Manufacturer</label>
+                <input type="text" id="manufacturer">
+              </div>
+              <div class="form-group">
+                <label for="sampleQuantity">Sample Quantity</label>
+                <input type="number" id="sampleQuantity" min="1" value="1">
+              </div>
+              <div class="form-group">
+                <label for="dateReceived">Date Received *</label>
+                <input type="date" id="dateReceived" required>
+              </div>
+              <div class="form-group">
+                <label for="testingDate">Testing Date</label>
+                <input type="date" id="testingDate">
+              </div>
+              <div class="form-group">
+                <label for="technician">Laboratory Technician *</label>
+                <input type="text" id="technician" required>
+              </div>
+              <div class="form-group">
+                <label for="engineer">Engineer</label>
+                <input type="text" id="engineer">
+              </div>
+              <div class="form-group">
+                <label for="requestedTests">Requested Tests</label>
+                <div class="checkbox-group" id="requestedTests">
+                  <label><input type="checkbox" value="UTM"> UTM</label>
+                  <label><input type="checkbox" value="Composition"> Composition</label>
+                  <label><input type="checkbox" value="Hardness"> Hardness</label>
+                  <label><input type="checkbox" value="Microstructure"> Microstructure</label>
+                  <label><input type="checkbox" value="Impact"> Impact</label>
+                  <label><input type="checkbox" value="Roughness"> Surface Roughness</label>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="specification">Specification / Standard</label>
+                <input type="text" id="specification" placeholder="e.g. ASTM A36, ISO 6892">
+              </div>
+              <div class="form-group full-width">
+                <label for="remarks">Remarks</label>
+                <textarea id="remarks" rows="2"></textarea>
+              </div>
+              <div class="form-actions full-width">
+                <button type="submit" class="btn btn-primary">Save Sample</button>
+                <button type="button" class="btn btn-secondary" id="btnCancelSample">Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <h3>Registered Samples</h3>
+            <input type="text" class="search-input" id="sampleSearch" placeholder="Search samples...">
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="data-table" id="samplesTable">
+                <thead>
+                  <tr>
+                    <th>Report No.</th>
+                    <th>Sample ID</th>
+                    <th>Customer</th>
+                    <th>Material</th>
+                    <th>Grade</th>
+                    <th>Date Received</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- UTM Testing Page -->
+      <section class="page" id="page-utm">
+        <div class="page-actions">
+          <button class="btn btn-primary" id="btnNewUTM">+ New UTM Test</button>
+        </div>
+        <div class="card" id="utmFormCard" style="display:none;">
+          <div class="card-header">
+            <h3>Universal Testing Machine — Test Entry</h3>
+            <button class="btn-icon" id="btnCloseUTMForm">✕</button>
+          </div>
+          <div class="card-body">
+            <form id="utmForm" class="form-grid">
+              <input type="hidden" id="utmEditId">
+              <div class="form-group">
+                <label for="utmSampleId">Sample ID *</label>
+                <select id="utmSampleId" required></select>
+              </div>
+              <div class="form-group">
+                <label for="utmSpecimenId">Specimen ID *</label>
+                <input type="text" id="utmSpecimenId" required>
+              </div>
+              <div class="form-group">
+                <label for="utmMaterial">Material</label>
+                <input type="text" id="utmMaterial">
+              </div>
+              <div class="form-group">
+                <label for="utmStandard">Standard</label>
+                <select id="utmStandard">
+                  <option value="">— Select —</option>
+                  <option value="ASTM E8/E8M">ASTM E8/E8M</option>
+                  <option value="ISO 6892">ISO 6892</option>
+                  <option value="ASTM E9">ASTM E9 (Compression)</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="utmTestType">Test Type *</label>
+                <select id="utmTestType" required>
+                  <option value="Tensile">Tensile</option>
+                  <option value="Compression">Compression</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="utmSpecimenShape">Specimen Shape *</label>
+                <select id="utmSpecimenShape" required>
+                  <option value="Round">Round</option>
+                  <option value="Rectangular">Rectangular</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="utmGaugeLength">Gauge Length (mm) *</label>
+                <input type="number" id="utmGaugeLength" step="0.01" min="0.01" required>
+              </div>
+              <div class="form-group" id="utmDiameterGroup">
+                <label for="utmDiameter">Original Diameter (mm) *</label>
+                <input type="number" id="utmDiameter" step="0.01" min="0.01">
+              </div>
+              <div class="form-group" id="utmWidthGroup" style="display:none;">
+                <label for="utmWidth">Original Width (mm)</label>
+                <input type="number" id="utmWidth" step="0.01" min="0.01">
+              </div>
+              <div class="form-group" id="utmThicknessGroup" style="display:none;">
+                <label for="utmThickness">Original Thickness (mm)</label>
+                <input type="number" id="utmThickness" step="0.01" min="0.01">
+              </div>
+              <div class="form-group">
+                <label for="utmArea">Original Cross-sectional Area (mm²)</label>
+                <input type="number" id="utmArea" step="0.0001" readonly>
+              </div>
+              <div class="form-group">
+                <label for="utmFinalGauge">Final Gauge Length (mm)</label>
+                <input type="number" id="utmFinalGauge" step="0.01" min="0">
+              </div>
+              <div class="form-group">
+                <label for="utmFinalDiameter">Final Diameter (mm)</label>
+                <input type="number" id="utmFinalDiameter" step="0.01" min="0">
+              </div>
+              <div class="form-group">
+                <label for="utmMaxLoad">Maximum Load (kN) *</label>
+                <input type="number" id="utmMaxLoad" step="0.001" min="0" required>
+              </div>
+              <div class="form-group">
+                <label for="utmYieldLoad">Yield Load (kN)</label>
+                <input type="number" id="utmYieldLoad" step="0.001" min="0">
+              </div>
+              <div class="form-group">
+                <label for="utmFractureLoad">Fracture Load (kN)</label>
+                <input type="number" id="utmFractureLoad" step="0.001" min="0">
+              </div>
+              <div class="form-group">
+                <label for="utmExtension">Extension at Max Load (mm)</label>
+                <input type="number" id="utmExtension" step="0.01" min="0">
+              </div>
+              <div class="form-group">
+                <label for="utmTemperature">Test Temperature (°C)</label>
+                <input type="number" id="utmTemperature" step="0.1" value="23">
+              </div>
+              <div class="form-group">
+                <label for="utmSpeed">Test Speed (mm/min)</label>
+                <input type="number" id="utmSpeed" step="0.1" min="0">
+              </div>
+              <div class="form-group">
+                <label for="utmMachineId">Machine ID</label>
+                <input type="text" id="utmMachineId">
+              </div>
+              <div class="form-group">
+                <label for="utmOperator">Operator *</label>
+                <input type="text" id="utmOperator" required>
+              </div>
+              <div class="form-group">
+                <label for="utmTestDate">Test Date *</label>
+                <input type="date" id="utmTestDate" required>
+              </div>
+              <div class="form-group">
+                <label for="utmSpecYS">Spec. Min Yield Strength (MPa)</label>
+                <input type="number" id="utmSpecYS" step="0.1" min="0">
+              </div>
+              <div class="form-group">
+                <label for="utmSpecUTS">Spec. Min UTS (MPa)</label>
+                <input type="number" id="utmSpecUTS" step="0.1" min="0">
+              </div>
+              <div class="form-group">
+                <label for="utmSpecElong">Spec. Min Elongation (%)</label>
+                <input type="number" id="utmSpecElong" step="0.1" min="0">
+              </div>
+              <div class="form-group full-width">
+                <h4>Calculated Results</h4>
+                <div class="results-grid" id="utmResults">
+                  <div class="result-item"><span>Cross-sectional Area</span><strong id="resArea">—</strong></div>
+                  <div class="result-item"><span>Yield Strength (YS)</span><strong id="resYS">—</strong></div>
+                  <div class="result-item"><span>Ultimate Tensile Strength (UTS)</span><strong id="resUTS">—</strong></div>
+                  <div class="result-item"><span>% Elongation</span><strong id="resElong">—</strong></div>
+                  <div class="result-item"><span>% Reduction of Area</span><strong id="resRA">—</strong></div>
+                  <div class="result-item"><span>Status</span><strong id="resUTMStatus">—</strong></div>
+                </div>
+              </div>
+              <div class="form-group full-width">
+                <h4>Load–Extension Data Points (optional)</h4>
+                <p class="hint">Enter comma-separated pairs: load_kN,extension_mm (one pair per line)</p>
+                <textarea id="utmDataPoints" rows="4" placeholder="0,0&#10;10,0.5&#10;25,1.2&#10;40,2.5"></textarea>
+              </div>
+              <div class="form-group full-width chart-container">
+                <canvas id="utmLoadChart" height="200"></canvas>
+              </div>
+              <div class="form-group full-width chart-container">
+                <canvas id="utmStressChart" height="200"></canvas>
+              </div>
+              <div class="form-actions full-width">
+                <button type="button" class="btn btn-secondary" id="btnCalcUTM">Calculate</button>
+                <button type="submit" class="btn btn-primary">Save UTM Test</button>
+                <button type="button" class="btn btn-secondary" id="btnCancelUTM">Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>UTM Test Records</h3></div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="data-table" id="utmTable">
+                <thead>
+                  <tr>
+                    <th>Sample ID</th>
+                    <th>Specimen</th>
+                    <th>Type</th>
+                    <th>YS (MPa)</th>
+                    <th>UTS (MPa)</th>
+                    <th>% Elong</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Composition Page -->
+      <section class="page" id="page-composition">
+        <div class="page-actions">
+          <button class="btn btn-primary" id="btnNewComp">+ New Composition Test</button>
+        </div>
+        <div class="card" id="compFormCard" style="display:none;">
+          <div class="card-header">
+            <h3>Chemical Composition Analysis</h3>
+            <button class="btn-icon" id="btnCloseCompForm">✕</button>
+          </div>
+          <div class="card-body">
+            <form id="compForm">
+              <input type="hidden" id="compEditId">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="compSampleId">Sample ID *</label>
+                  <select id="compSampleId" required></select>
+                </div>
+                <div class="form-group">
+                  <label for="compStandard">Standard</label>
+                  <input type="text" id="compStandard" placeholder="e.g. ASTM A36">
+                </div>
+                <div class="form-group">
+                  <label for="compMethod">Method</label>
+                  <select id="compMethod">
+                    <option value="OES">Optical Emission Spectroscopy (OES)</option>
+                    <option value="XRF">X-Ray Fluorescence (XRF)</option>
+                    <option value="ICP">ICP-OES</option>
+                    <option value="Wet">Wet Chemistry</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="compOperator">Operator *</label>
+                  <input type="text" id="compOperator" required>
+                </div>
+                <div class="form-group">
+                  <label for="compTestDate">Test Date *</label>
+                  <input type="date" id="compTestDate" required>
+                </div>
+              </div>
+              <div class="table-responsive" style="margin-top:1rem;">
+                <table class="data-table" id="compElementsTable">
+                  <thead>
+                    <tr>
+                      <th>Element</th>
+                      <th>Measured %</th>
+                      <th>Min Spec %</th>
+                      <th>Max Spec %</th>
+                      <th>Unit</th>
+                      <th>Status</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody id="compElementsBody"></tbody>
+                </table>
+              </div>
+              <div class="form-actions" style="margin-top:1rem;">
+                <button type="button" class="btn btn-secondary" id="btnAddElement">+ Add Element</button>
+                <button type="button" class="btn btn-secondary" id="btnCalcComp">Validate</button>
+                <button type="submit" class="btn btn-primary">Save Composition</button>
+                <button type="button" class="btn btn-secondary" id="btnCancelComp">Cancel</button>
+              </div>
+              <div class="chart-container" style="margin-top:1.5rem;">
+                <canvas id="compChart" height="250"></canvas>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>Composition Test Records</h3></div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="data-table" id="compTable">
+                <thead>
+                  <tr>
+                    <th>Sample ID</th>
+                    <th>Standard</th>
+                    <th>Method</th>
+                    <th>Elements</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Hardness Page -->
+      <section class="page" id="page-hardness">
+        <div class="page-actions">
+          <button class="btn btn-primary" id="btnNewHardness">+ New Hardness Test</button>
+        </div>
+        <div class="card" id="hardnessFormCard" style="display:none;">
+          <div class="card-header">
+            <h3>Hardness Test</h3>
+            <button class="btn-icon" id="btnCloseHardnessForm">✕</button>
+          </div>
+          <div class="card-body">
+            <form id="hardnessForm" class="form-grid">
+              <input type="hidden" id="hardnessEditId">
+              <div class="form-group">
+                <label for="hardnessSampleId">Sample ID *</label>
+                <select id="hardnessSampleId" required></select>
+              </div>
+              <div class="form-group">
+                <label for="hardnessMethod">Test Method *</label>
+                <select id="hardnessMethod" required>
+                  <option value="Brinell">Brinell (HB/HBW)</option>
+                  <option value="Rockwell B">Rockwell B (HRB)</option>
+                  <option value="Rockwell C">Rockwell C (HRC)</option>
+                  <option value="Vickers">Vickers (HV)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="hardnessScale">Scale</label>
+                <input type="text" id="hardnessScale" placeholder="e.g. HRC, HV10">
+              </div>
+              <div class="form-group">
+                <label for="hardnessIndenter">Indenter</label>
+                <input type="text" id="hardnessIndenter">
+              </div>
+              <div class="form-group">
+                <label for="hardnessLoad">Load</label>
+                <input type="text" id="hardnessLoad" placeholder="e.g. 150 kgf">
+              </div>
+              <div class="form-group">
+                <label for="hardnessLocation">Test Location</label>
+                <input type="text" id="hardnessLocation">
+              </div>
+              <div class="form-group">
+                <label for="hardnessR1">Reading 1 *</label>
+                <input type="number" id="hardnessR1" step="0.1" required>
+              </div>
+              <div class="form-group">
+                <label for="hardnessR2">Reading 2</label>
+                <input type="number" id="hardnessR2" step="0.1">
+              </div>
+              <div class="form-group">
+                <label for="hardnessR3">Reading 3</label>
+                <input type="number" id="hardnessR3" step="0.1">
+              </div>
+              <div class="form-group">
+                <label for="hardnessR4">Reading 4</label>
+                <input type="number" id="hardnessR4" step="0.1">
+              </div>
+              <div class="form-group">
+                <label for="hardnessR5">Reading 5</label>
+                <input type="number" id="hardnessR5" step="0.1">
+              </div>
+              <div class="form-group">
+                <label for="hardnessSpecMin">Spec. Min Hardness</label>
+                <input type="number" id="hardnessSpecMin" step="0.1">
+              </div>
+              <div class="form-group">
+                <label for="hardnessSpecMax">Spec. Max Hardness</label>
+                <input type="number" id="hardnessSpecMax" step="0.1">
+              </div>
+              <div class="form-group">
+                <label for="hardnessOperator">Operator *</label>
+                <input type="text" id="hardnessOperator" required>
+              </div>
+              <div class="form-group">
+                <label for="hardnessTestDate">Test Date *</label>
+                <input type="date" id="hardnessTestDate" required>
+              </div>
+              <div class="form-group full-width">
+                <h4>Calculated Results</h4>
+                <div class="results-grid" id="hardnessResults">
+                  <div class="result-item"><span>Average</span><strong id="resHAvg">—</strong></div>
+                  <div class="result-item"><span>Minimum</span><strong id="resHMin">—</strong></div>
+                  <div class="result-item"><span>Maximum</span><strong id="resHMax">—</strong></div>
+                  <div class="result-item"><span>Range</span><strong id="resHRange">—</strong></div>
+                  <div class="result-item"><span>Std. Deviation</span><strong id="resHStd">—</strong></div>
+                  <div class="result-item"><span>Status</span><strong id="resHStatus">—</strong></div>
+                </div>
+              </div>
+              <div class="form-group full-width chart-container">
+                <canvas id="hardnessChart" height="200"></canvas>
+              </div>
+              <div class="form-actions full-width">
+                <button type="button" class="btn btn-secondary" id="btnCalcHardness">Calculate</button>
+                <button type="submit" class="btn btn-primary">Save Hardness Test</button>
+                <button type="button" class="btn btn-secondary" id="btnCancelHardness">Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>Hardness Test Records</h3></div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="data-table" id="hardnessTable">
+                <thead>
+                  <tr>
+                    <th>Sample ID</th>
+                    <th>Method</th>
+                    <th>Average</th>
+                    <th>Min</th>
+                    <th>Max</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Microstructure Page -->
+      <section class="page" id="page-microstructure">
+        <div class="page-actions">
+          <button class="btn btn-primary" id="btnNewMicro">+ New Microstructure Exam</button>
+        </div>
+        <div class="card" id="microFormCard" style="display:none;">
+          <div class="card-header">
+            <h3>Metallographic / Microstructure Examination</h3>
+            <button class="btn-icon" id="btnCloseMicroForm">✕</button>
+          </div>
+          <div class="card-body">
+            <form id="microForm" class="form-grid">
+              <input type="hidden" id="microEditId">
+              <div class="form-group">
+                <label for="microSampleId">Sample ID *</label>
+                <select id="microSampleId" required></select>
+              </div>
+              <div class="form-group">
+                <label for="microSpecimenId">Specimen ID</label>
+                <input type="text" id="microSpecimenId">
+              </div>
+              <div class="form-group">
+                <label for="microMaterial">Material</label>
+                <input type="text" id="microMaterial">
+              </div>
+              <div class="form-group">
+                <label for="microCutting">Cutting Method</label>
+                <input type="text" id="microCutting">
+              </div>
+              <div class="form-group">
+                <label for="microMounting">Mounting Method</label>
+                <input type="text" id="microMounting">
+              </div>
+              <div class="form-group">
+                <label for="microGrinding">Grinding Procedure</label>
+                <input type="text" id="microGrinding">
+              </div>
+              <div class="form-group">
+                <label for="microPolishing">Polishing Procedure</label>
+                <input type="text" id="microPolishing">
+              </div>
+              <div class="form-group">
+                <label for="microEtchant">Etchant</label>
+                <input type="text" id="microEtchant" placeholder="e.g. Nital 2%">
+              </div>
+              <div class="form-group">
+                <label for="microEtchTime">Etching Time</label>
+                <input type="text" id="microEtchTime" placeholder="e.g. 15 s">
+              </div>
+              <div class="form-group">
+                <label for="microMicroscope">Microscope</label>
+                <input type="text" id="microMicroscope">
+              </div>
+              <div class="form-group">
+                <label for="microMagnification">Magnification *</label>
+                <select id="microMagnification" required>
+                  <option value="50X">50X</option>
+                  <option value="100X">100X</option>
+                  <option value="200X">200X</option>
+                  <option value="500X">500X</option>
+                  <option value="1000X">1000X</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="microIllumination">Illumination</label>
+                <input type="text" id="microIllumination">
+              </div>
+              <div class="form-group">
+                <label for="microTemp">Test Temperature (°C)</label>
+                <input type="number" id="microTemp" value="23">
+              </div>
+              <div class="form-group">
+                <label for="microOperator">Operator *</label>
+                <input type="text" id="microOperator" required>
+              </div>
+              <div class="form-group">
+                <label for="microTestDate">Examination Date *</label>
+                <input type="date" id="microTestDate" required>
+              </div>
+              <div class="form-group full-width">
+                <label for="microObservation">Observation (Grain structure, phases, inclusions, etc.)</label>
+                <textarea id="microObservation" rows="4" placeholder="Describe grain structure, ferrite, pearlite, martensite, inclusions, porosity, cracks, carbides, etc."></textarea>
+              </div>
+              <div class="form-group full-width">
+                <label>Microscope Images</label>
+                <input type="file" id="microImageInput" accept="image/*" multiple>
+                <div class="image-preview-grid" id="microImagePreview"></div>
+              </div>
+              <div class="form-actions full-width">
+                <button type="submit" class="btn btn-primary">Save Examination</button>
+                <button type="button" class="btn btn-secondary" id="btnCancelMicro">Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>Microstructure Records</h3></div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="data-table" id="microTable">
+                <thead>
+                  <tr>
+                    <th>Sample ID</th>
+                    <th>Magnification</th>
+                    <th>Etchant</th>
+                    <th>Operator</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Impact Page -->
+      <section class="page" id="page-impact">
+        <div class="page-actions">
+          <button class="btn btn-primary" id="btnNewImpact">+ New Impact Test</button>
+        </div>
+        <div class="card" id="impactFormCard" style="display:none;">
+          <div class="card-header">
+            <h3>Impact Test (Charpy / Izod)</h3>
+            <button class="btn-icon" id="btnCloseImpactForm">✕</button>
+          </div>
+          <div class="card-body">
+            <form id="impactForm" class="form-grid">
+              <input type="hidden" id="impactEditId">
+              <div class="form-group">
+                <label for="impactSampleId">Sample ID *</label>
+                <select id="impactSampleId" required></select>
+              </div>
+              <div class="form-group">
+                <label for="impactSpecimenId">Specimen ID</label>
+                <input type="text" id="impactSpecimenId">
+              </div>
+              <div class="form-group">
+                <label for="impactStandard">Standard</label>
+                <select id="impactStandard">
+                  <option value="">— Select —</option>
+                  <option value="ASTM E23">ASTM E23</option>
+                  <option value="ISO 148">ISO 148</option>
+                  <option value="ASTM E23 Izod">ASTM E23 (Izod)</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="impactMethod">Test Method *</label>
+                <select id="impactMethod" required>
+                  <option value="Charpy V-notch">Charpy V-notch</option>
+                  <option value="Charpy U-notch">Charpy U-notch</option>
+                  <option value="Izod">Izod</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="impactNotch">Notch Type</label>
+                <input type="text" id="impactNotch">
+              </div>
+              <div class="form-group">
+                <label for="impactDimensions">Specimen Dimensions</label>
+                <input type="text" id="impactDimensions" placeholder="e.g. 10 × 10 × 55 mm">
+              </div>
+              <div class="form-group">
+                <label for="impactNotchDepth">Notch Depth (mm)</label>
+                <input type="number" id="impactNotchDepth" step="0.1">
+              </div>
+              <div class="form-group">
+                <label for="impactTemp">Test Temperature (°C) *</label>
+                <input type="number" id="impactTemp" step="0.1" required value="23">
+              </div>
+              <div class="form-group">
+                <label for="impactPendulum">Pendulum Energy (J)</label>
+                <input type="number" id="impactPendulum" step="0.1">
+              </div>
+              <div class="form-group">
+                <label for="impactInitial">Initial Energy (J)</label>
+                <input type="number" id="impactInitial" step="0.1">
+              </div>
+              <div class="form-group">
+                <label for="impactFinal">Final Energy (J)</label>
+                <input type="number" id="impactFinal" step="0.1">
+              </div>
+              <div class="form-group">
+                <label for="impactAbsorbed">Absorbed Energy (J) *</label>
+                <input type="number" id="impactAbsorbed" step="0.1" required>
+              </div>
+              <div class="form-group">
+                <label for="impactFracture">Fracture Appearance</label>
+                <input type="text" id="impactFracture" placeholder="e.g. Ductile, Brittle, Mixed">
+              </div>
+              <div class="form-group">
+                <label for="impactSpecMin">Spec. Min Energy (J)</label>
+                <input type="number" id="impactSpecMin" step="0.1">
+              </div>
+              <div class="form-group">
+                <label for="impactOperator">Operator *</label>
+                <input type="text" id="impactOperator" required>
+              </div>
+              <div class="form-group">
+                <label for="impactTestDate">Test Date *</label>
+                <input type="date" id="impactTestDate" required>
+              </div>
+              <div class="form-group full-width">
+                <h4>Multiple Specimens (optional — enter energies separated by comma)</h4>
+                <input type="text" id="impactMultiEnergies" placeholder="e.g. 45, 48, 42">
+              </div>
+              <div class="form-group full-width">
+                <div class="results-grid" id="impactResults">
+                  <div class="result-item"><span>Absorbed Energy</span><strong id="resIEnergy">—</strong></div>
+                  <div class="result-item"><span>Average (multi)</span><strong id="resIAvg">—</strong></div>
+                  <div class="result-item"><span>Min</span><strong id="resIMin">—</strong></div>
+                  <div class="result-item"><span>Max</span><strong id="resIMax">—</strong></div>
+                  <div class="result-item"><span>Status</span><strong id="resIStatus">—</strong></div>
+                </div>
+              </div>
+              <div class="form-group full-width chart-container">
+                <canvas id="impactChart" height="200"></canvas>
+              </div>
+              <div class="form-actions full-width">
+                <button type="button" class="btn btn-secondary" id="btnCalcImpact">Calculate</button>
+                <button type="submit" class="btn btn-primary">Save Impact Test</button>
+                <button type="button" class="btn btn-secondary" id="btnCancelImpact">Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>Impact Test Records</h3></div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="data-table" id="impactTable">
+                <thead>
+                  <tr>
+                    <th>Sample ID</th>
+                    <th>Method</th>
+                    <th>Temp (°C)</th>
+                    <th>Energy (J)</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Surface Roughness Page -->
+      <section class="page" id="page-roughness">
+        <div class="page-actions">
+          <button class="btn btn-primary" id="btnNewRoughness">+ New Roughness Test</button>
+        </div>
+        <div class="card" id="roughnessFormCard" style="display:none;">
+          <div class="card-header">
+            <h3>Surface Roughness Test</h3>
+            <button class="btn-icon" id="btnCloseRoughnessForm">✕</button>
+          </div>
+          <div class="card-body">
+            <form id="roughnessForm" class="form-grid">
+              <input type="hidden" id="roughnessEditId">
+              <div class="form-group">
+                <label for="roughSampleId">Sample ID *</label>
+                <select id="roughSampleId" required></select>
+              </div>
+              <div class="form-group">
+                <label for="roughSpecimenId">Specimen ID</label>
+                <input type="text" id="roughSpecimenId">
+              </div>
+              <div class="form-group">
+                <label for="roughLocation">Measurement Location</label>
+                <input type="text" id="roughLocation">
+              </div>
+              <div class="form-group">
+                <label for="roughInstrument">Instrument ID</label>
+                <input type="text" id="roughInstrument">
+              </div>
+              <div class="form-group">
+                <label for="roughCutoff">Cut-off Length</label>
+                <input type="text" id="roughCutoff" placeholder="e.g. 0.8 mm">
+              </div>
+              <div class="form-group">
+                <label for="roughEvalLen">Evaluation Length</label>
+                <input type="text" id="roughEvalLen">
+              </div>
+              <div class="form-group">
+                <label for="roughFilter">Filter</label>
+                <input type="text" id="roughFilter">
+              </div>
+              <div class="form-group">
+                <label for="roughSpeed">Measurement Speed</label>
+                <input type="text" id="roughSpeed">
+              </div>
+              <div class="form-group">
+                <label for="roughParam">Primary Parameter *</label>
+                <select id="roughParam" required>
+                  <option value="Ra">Ra</option>
+                  <option value="Rz">Rz</option>
+                  <option value="Rq">Rq</option>
+                  <option value="Rt">Rt</option>
+                  <option value="Rp">Rp</option>
+                  <option value="Rv">Rv</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="roughM1">Measurement 1 (μm) *</label>
+                <input type="number" id="roughM1" step="0.01" required>
+              </div>
+              <div class="form-group">
+                <label for="roughM2">Measurement 2 (μm)</label>
+                <input type="number" id="roughM2" step="0.01">
+              </div>
+              <div class="form-group">
+                <label for="roughM3">Measurement 3 (μm)</label>
+                <input type="number" id="roughM3" step="0.01">
+              </div>
+              <div class="form-group">
+                <label for="roughM4">Measurement 4 (μm)</label>
+                <input type="number" id="roughM4" step="0.01">
+              </div>
+              <div class="form-group">
+                <label for="roughM5">Measurement 5 (μm)</label>
+                <input type="number" id="roughM5" step="0.01">
+              </div>
+              <div class="form-group">
+                <label for="roughSpecMax">Spec. Max Allowed (μm)</label>
+                <input type="number" id="roughSpecMax" step="0.01">
+              </div>
+              <div class="form-group">
+                <label for="roughOperator">Operator *</label>
+                <input type="text" id="roughOperator" required>
+              </div>
+              <div class="form-group">
+                <label for="roughTestDate">Test Date *</label>
+                <input type="date" id="roughTestDate" required>
+              </div>
+              <div class="form-group full-width">
+                <div class="results-grid" id="roughnessResults">
+                  <div class="result-item"><span>Average</span><strong id="resRAvg">—</strong></div>
+                  <div class="result-item"><span>Minimum</span><strong id="resRMin">—</strong></div>
+                  <div class="result-item"><span>Maximum</span><strong id="resRMax">—</strong></div>
+                  <div class="result-item"><span>Range</span><strong id="resRRange">—</strong></div>
+                  <div class="result-item"><span>Std. Deviation</span><strong id="resRStd">—</strong></div>
+                  <div class="result-item"><span>Status</span><strong id="resRStatus">—</strong></div>
+                </div>
+              </div>
+              <div class="form-group full-width chart-container">
+                <canvas id="roughnessChart" height="200"></canvas>
+              </div>
+              <div class="form-actions full-width">
+                <button type="button" class="btn btn-secondary" id="btnCalcRoughness">Calculate</button>
+                <button type="submit" class="btn btn-primary">Save Roughness Test</button>
+                <button type="button" class="btn btn-secondary" id="btnCancelRoughness">Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>Surface Roughness Records</h3></div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="data-table" id="roughnessTable">
+                <thead>
+                  <tr>
+                    <th>Sample ID</th>
+                    <th>Parameter</th>
+                    <th>Average (μm)</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Reports Page -->
+      <section class="page" id="page-reports">
+        <div class="card">
+          <div class="card-header">
+            <h3>Generate Laboratory Report</h3>
+          </div>
+          <div class="card-body">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="reportSampleSelect">Select Sample *</label>
+                <select id="reportSampleSelect"></select>
+              </div>
+              <div class="form-group">
+                <label for="reportTestedBy">Tested By</label>
+                <input type="text" id="reportTestedBy">
+              </div>
+              <div class="form-group">
+                <label for="reportCheckedBy">Checked By</label>
+                <input type="text" id="reportCheckedBy">
+              </div>
+              <div class="form-group">
+                <label for="reportApprovedBy">Approved By</label>
+                <input type="text" id="reportApprovedBy">
+              </div>
+            </div>
+            <div class="form-actions" style="margin-top:1rem;">
+              <button class="btn btn-primary" id="btnGenerateReport">Generate Report</button>
+              <button class="btn btn-secondary" id="btnPrintReport" style="display:none;">Print / Save PDF</button>
+            </div>
+          </div>
+        </div>
+        <div class="report-container" id="reportContainer" style="display:none;">
+          <!-- Report content injected by JS -->
+        </div>
+      </section>
+
+      <!-- History Page -->
+      <section class="page" id="page-history">
+        <div class="card">
+          <div class="card-header">
+            <h3>Test History & Search</h3>
+          </div>
+          <div class="card-body">
+            <div class="search-bar form-grid">
+              <div class="form-group">
+                <label for="histReportNo">Report Number</label>
+                <input type="text" id="histReportNo">
+              </div>
+              <div class="form-group">
+                <label for="histSampleId">Sample ID</label>
+                <input type="text" id="histSampleId">
+              </div>
+              <div class="form-group">
+                <label for="histCustomer">Customer</label>
+                <input type="text" id="histCustomer">
+              </div>
+              <div class="form-group">
+                <label for="histMaterial">Material</label>
+                <input type="text" id="histMaterial">
+              </div>
+              <div class="form-group">
+                <label for="histStatus">Status</label>
+                <select id="histStatus">
+                  <option value="">All</option>
+                  <option value="PASS">PASS</option>
+                  <option value="FAIL">FAIL</option>
+                  <option value="PENDING">PENDING</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="histDateFrom">Date From</label>
+                <input type="date" id="histDateFrom">
+              </div>
+              <div class="form-group">
+                <label for="histDateTo">Date To</label>
+                <input type="date" id="histDateTo">
+              </div>
+              <div class="form-group" style="align-self:end;">
+                <button class="btn btn-primary" id="btnSearchHistory">Search</button>
+                <button class="btn btn-secondary" id="btnClearHistory">Clear</button>
+              </div>
+            </div>
+            <div class="table-responsive" style="margin-top:1.5rem;">
+              <table class="data-table" id="historyTable">
+                <thead>
+                  <tr>
+                    <th>Report No.</th>
+                    <th>Sample ID</th>
+                    <th>Customer</th>
+                    <th>Material</th>
+                    <th>Grade</th>
+                    <th>Tests</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Settings Page -->
+      <section class="page" id="page-settings">
+        <div class="card">
+          <div class="card-header"><h3>Laboratory Settings</h3></div>
+          <div class="card-body">
+            <form id="settingsForm" class="form-grid">
+              <div class="form-group">
+                <label for="setLabName">Laboratory Name</label>
+                <input type="text" id="setLabName" value="Material Testing Laboratory">
+              </div>
+              <div class="form-group">
+                <label for="setLabAddress">Address</label>
+                <input type="text" id="setLabAddress">
+              </div>
+              <div class="form-group">
+                <label for="setLabPhone">Phone</label>
+                <input type="text" id="setLabPhone">
+              </div>
+              <div class="form-group">
+                <label for="setLabEmail">Email</label>
+                <input type="email" id="setLabEmail">
+              </div>
+              <div class="form-group">
+                <label for="setReportPrefix">Report Number Prefix</label>
+                <input type="text" id="setReportPrefix" value="MTL">
+              </div>
+              <div class="form-actions full-width">
+                <button type="submit" class="btn btn-primary">Save Settings</button>
+                <button type="button" class="btn btn-danger" id="btnClearAllData">Clear All Data</button>
+                <button type="button" class="btn btn-secondary" id="btnLoadDemo">Load Demo Data</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Toast notification -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Confirm modal -->
+  <div class="modal" id="confirmModal">
+    <div class="modal-content">
+      <h3 id="confirmTitle">Confirm</h3>
+      <p id="confirmMessage"></p>
+      <div class="modal-actions">
+        <button class="btn btn-danger" id="confirmYes">Yes</button>
+        <button class="btn btn-secondary" id="confirmNo">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
